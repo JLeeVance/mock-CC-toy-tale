@@ -36,7 +36,7 @@ function renderToys(toyArray){
     img.src = toyObj.image;
 
     const p = document.createElement("p");
-    let currLikes = toyObj.likes;
+    // let currLikes = toyObj.likes;
     p.textContent = toyObj.likes + " " + "Likes";
 
     const btn = document.createElement("button");
@@ -44,12 +44,25 @@ function renderToys(toyArray){
     btn.id = toyObj.id;
     btn.textContent = "Like ❤️";
 
-    btn.addEventListener("click", ()  => increaseLikes());
+    btn.addEventListener('click', ()  => increaseLikes());
 
 
-    const increaseLikes = () => {
-      currLikes++
-      p.textContent = `${currLikes} Likes` 
+    function increaseLikes(){
+
+      const patchObj = {
+        likes: toyObj.likes++
+      }
+      
+      fetch(`http://localhost:3000/toys/${toyObj.id}` , {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(patchObj)
+       }
+      )
+      .then((resp)=> resp.json())
+      .then((data) => p.textContent = `${patchObj.likes} Likes`)
     };
 
     div.append(h2, img, p, btn);
@@ -57,6 +70,37 @@ function renderToys(toyArray){
 
   })
 }
+
+// btn.addEventListener('click', handleIncrementLikes)
+
+//     function handleIncrementLikes() {
+      
+//       const newToyLikesObj = {
+//         likes : toyObj.likes++
+//       }
+
+//       // performs PATCH request
+//       fetch(`http://localhost:3000/toys/${toyObj.id}`, // fetches individual object by ID
+//         {
+//             method : 'PATCH',
+//             headers : {
+//               'Content-type' : 'application/json' 
+//             },
+//             body : JSON.stringify(newToyLikesObj)
+//         }
+//       )
+//       .then((resp) => resp.json())
+//       .then((newToyObj) => p.textContent = `${newToyObj.likes} likes`)
+//     }
+
+
+
+
+
+
+
+
+
 
 
 const form = document.querySelector(".add-toy-form");
